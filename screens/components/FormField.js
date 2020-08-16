@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, StyleSheet,TextInput, TouchableOpacity,Button, Text  } from 'react-native';
-
-export const Inputs = ({ values, action,textplaceholder,autoCompleteType="default", entryType='default', secureText=false,disabledInput=false }) => {
+import { View, StyleSheet,TextInput, TouchableOpacity,Button, Text, Dimensions  } from 'react-native';
+const windowWidth = Dimensions.get('window').width;
+export const Inputs = ({ values, action,textplaceholder,entryType='default', secureText=false,disabledInput=false }) => {
 	return (
 		<View style={styles.buttonView}>
 			<TextInput
@@ -27,8 +27,8 @@ export const Buttons = ({ titles, action, disabledButton=false, buttonColor='#4C
 export const TouchableOpacityButtons = ({ titles, action, disabledButton=false, buttonColor='#4C7450',buttonID=`${titles}-${buttonColor}`}) => {
 	return (
 		<View style={styles.buttonView}>
-      <TouchableOpacity style={styles.buttonContainer} disabled={disabledButton} id={buttonID} onPress={action}>
-        <Text>{titles}</Text>
+      <TouchableOpacity style={[styles.buttonContainer,styles.buttonView,{backgroundColor:buttonColor}]} disabled={disabledButton} id={buttonID} onPress={action}>
+        <Text style={styles.buttonText}>{titles}</Text>
       </TouchableOpacity>
 		</View>
 	);
@@ -44,13 +44,13 @@ const styles = StyleSheet.create({
 		backgroundColor: '#F5F5F5',
     marginTop: 10,
 		height: 40,
-		width:300
+		width:windowWidth-windowWidth/3
 	},
   buttonText:{
     textAlign:'center',
     lineHeight:40,
     fontWeight:"700",
-    fontSize:14,
+    fontSize:16,
     color:'#fff'
 	},
 	buttonView:{
@@ -59,9 +59,9 @@ const styles = StyleSheet.create({
 	 justifyContent:'center'
   },
   buttonContainer: {
-		borderRadius: '50%',
-		backgroundColor: '#4C7450',
-		width:'100%'
+		borderRadius: 30,
+		width:windowWidth-windowWidth/3,
+		height:40
 	}
 });
 export default Inputs;

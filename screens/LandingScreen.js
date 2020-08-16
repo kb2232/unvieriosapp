@@ -23,14 +23,15 @@ function AuthScreen(props) {
         {renderLogo()}
         <Spacer />
         <Spacer>
-          <TouchableOpacityButtons titles="Log In" action={()=>console.log("log in pressed")} />
+          <TouchableOpacityButtons titles="Log In" action={()=>renderDestination('loginpage')} />
         </Spacer>
         <View style={[styles.rowItems2, styles.rowItems]}>
           <Text>Don't have an account? </Text>
-          <TouchableOpacity style={styles.rowItems} onPress={() => console.log('createaccountpage')}>
+          <TouchableOpacity style={styles.rowItems} onPress={() => renderDestination('createaccountpage')}>
             <Text style={{ color: '#29B6F6' }}>Sign up</Text>
           </TouchableOpacity>
 			  </View>
+        <SmallSpacer />
         <Text style={{fontWeight: '800' }}>
           or connect using 
         </Text>
