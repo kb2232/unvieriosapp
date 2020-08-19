@@ -1,4 +1,4 @@
-import React, { useContext, useCallback, useState } from 'react';
+import React, { useContext, useCallback, useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { View, StyleSheet, Image, TouchableOpacity, Text, Dimensions } from 'react-native';
 import {Inputs,TouchableOpacityButtons} from './components/FormField';
@@ -8,9 +8,12 @@ import Spacer, {SmallSpacer, SmallestSpacer} from './components/Spacer';
 const windowWidth = Dimensions.get('window').width;
 
 function CreatAccountScreen(props) {
-  const { } = useContext(Context);
+  const { data:{token},clearErrorMessage} = useContext(Context);
   const [email,setEmail] = useState("")
-
+  useEffect(() => {
+		props.navigation.addListener('blur', () => clearErrorMessage());
+		props.navigation.addListener('focus', () => clearErrorMessage());
+  }, []);
   const renderLogo = () => {
     return (
       <View>
@@ -27,7 +30,14 @@ function CreatAccountScreen(props) {
     const {navigation:{navigate}} = props;
     navigate(destination)
   })
-
+  if(token){
+    const {navigation:{navigate}} = props;
+    return (
+    <View>
+      {navigate('mainprofilepage')}
+    </View>
+    )
+  }
   return (
     <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>
         {renderLogo()}

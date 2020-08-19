@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { View, StyleSheet, Image, TouchableOpacity, Text, Dimensions } from 'react-native';
 import {TouchableOpacityButtons} from './components/FormField';
@@ -6,17 +6,28 @@ import { Context } from './context/AuthContext';
 import { FontAwesome } from '@expo/vector-icons';
 import Spacer, {SmallSpacer, SmallestSpacer} from './components/Spacer';
 const windowWidth = Dimensions.get('window').width;
+
 function AuthScreen(props) {
-  const { } = useContext(Context);
+  const {data:{token} } = useContext(Context);
   const renderLogo = () => {
     return (
       <Image style={styles.imageStyle} source={require('../assets/logo.png')} />
     );
   };
-  const renderDestination=useCallback((destination)=>{
+
+  const renderDestination=useCallback(async(destination)=>{
     const {navigation:{navigate}} = props;
     navigate(destination)
   })
+
+  if(token){
+    const {navigation:{navigate}} = props;
+    return (
+      <>
+        {navigate('mainprofilepage')}
+      </>
+    )
+  }
 
   return (
     <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>

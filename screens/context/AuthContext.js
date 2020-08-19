@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useRef, useState } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import * as Facebook from 'expo-facebook';
 import firebase from 'firebase';
 import { FacebookAPI } from '../api/Auth';
@@ -19,7 +19,7 @@ const stateReducer = (state, action) => {
 		case 'clear_error':
 			return { errorMessages: '' };
 		case 'sign_out':
-			return { ...state, token: null, errorMessage: '' };
+			return { ...state, token: null, errorMessages: '' };
 		default:
 			return state;
 	}
@@ -51,7 +51,6 @@ export const AuthProvider = (props) => {
 			firebase.auth().onAuthStateChanged(function (user) {
 				if (user) {
 					user.getIdToken().then(function (data) {
-            console.log({data})
 						return dispatch({ type: 'sign_in', payload: data });
 					});
 				}
@@ -101,33 +100,7 @@ export const AuthProvider = (props) => {
 			});
 		}
 	};
-	// ----sign up with phone - updated 8/12/20
-	const signinWithPhone = (props,phonenumber,password,buttonID)=>{
-		firebase.auth().useDeviceLanguage();
-		window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(buttonID, {
-			'size': 'invisible',
-			'callback': function(response) {
-				// reCAPTCHA solved, allow signInWithPhoneNumber.
-				onSignInSubmit(props,phonenumber,password,response);
-			}
-		});
-	}
-	// ----sign up with phone - updated 8/12/20
-	const onSignInSubmit=(props,phoneNumber,password,appVerifier)=>{
-		firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
-    .then(function (confirmationResult) {
-      // SMS sent. Prompt user to type the code from the message, then sign the
-			// user in with confirmationResult.confirm(code).
-			console.log({confirmationResult})
-			window.confirmationResult = confirmationResult;
-			return navigate('mainprofilepage');
-    }).catch(function (error) {
-			console.log({error})
-			window.recaptchaVerifier.render().then(function(widgetId) {
-				grecaptcha.reset(widgetId);
-			})
-    });
-	}
+
 	// -- signin with email password - updated 8/11/20
 	const signin = (props, email, password) => {
 		const {navigation: { navigate }} = props;
@@ -145,6 +118,13 @@ export const AuthProvider = (props) => {
 				});
 			});
 	};
+		/* sign out  ---updated 8/19/20--- */
+		const signout = async (props) => {
+			const {navigation: { navigate }} = props;
+			dispatch({ type: 'sign_out'})
+			firebase.auth().signOut();
+			navigate('landingpage');
+		};
 	//----------forget password link - updated 8/11/20
 	const forgetPasswordEmailLink = (props, email) => {
 		
@@ -165,12 +145,6 @@ export const AuthProvider = (props) => {
 					payload: 'email not in our system',
 				});
 			});
-	};
-	/* sign out  ---updated 8/11/20--- */
-	const signout = async (props) => {
-		const {navigation: { navigate }} = props;
-		firebase.auth().signOut();
-		navigate('loginpage');
 	};
 
 	/** Email confirmation - updated 7/31/20 */
@@ -226,7 +200,7 @@ export const AuthProvider = (props) => {
 
 	return (
 		<Context.Provider
-			value={{data: state,firebaseInitializer,EmailConfirmationProcess,clearErrorMessage,fblogIn,forgetPasswordEmailLink,signin,signinWithPhone,signout}}
+			value={{data: state,EmailConfirmationProcess,clearErrorMessage,fblogIn,forgetPasswordEmailLink,signin,signout}}
 		>
 			{props.children}
 		</Context.Provider>

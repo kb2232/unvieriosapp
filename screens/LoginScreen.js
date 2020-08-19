@@ -1,17 +1,17 @@
 import React, { useContext, useCallback, useState } from 'react';
 import { SafeAreaView } from 'react-navigation';
-import { View, StyleSheet, Image, TouchableOpacity, Text, Dimensions } from 'react-native';
-import {Inputs, TouchableOpacityButtons} from './components/FormField';
+import { View, StyleSheet, Image, TouchableOpacity, Text, Dimensions,ScrollView } from 'react-native';
+import {Inputs, TouchableOpacityButtons,Buttons} from './components/FormField';
 import { Context } from './context/AuthContext';
 import { FontAwesome } from '@expo/vector-icons';
 import Spacer, {SmallSpacer, SmallestSpacer} from './components/Spacer';
 const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 function LoginScreen(props) {
-  const { } = useContext(Context);
-  const [email,setEmail] = useState()
-  const [password,setPassword] = useState();
-
+  const {data:{errorMessages, token},signin} = useContext(Context);
+  const [email,setEmail] = useState("")
+  const [password,setPassword] = useState("");
   const renderLogo = () => {
     return (
       <View>
@@ -26,16 +26,32 @@ function LoginScreen(props) {
     const {navigation:{navigate}} = props;
     navigate(destination)
   })
-
+  if(token){
+    const {navigation:{navigate}} = props;
+    return (
+      <>
+        {navigate('mainprofilepage')}
+      </>
+    )
+  }
   return (
-    <SafeAreaView forceInset={{ top: 'always' }} style={styles.container}>
-        {renderLogo()}
+    <SafeAreaView forceInset={{ top: 'always' }} >
+       <ScrollView alwaysBounceVertical={true}>
+       <View style={styles.container}>
+       {renderLogo()}
+          <Text style={{textAlign:'center', color:'red'}}>
+            {errorMessages?errorMessages:''}
+          </Text>
         <Spacer>
           <Inputs values={email} textplaceholder="Email" action={(text)=>setEmail(text)} />
           <SmallestSpacer />
           <Inputs values={password} textplaceholder="Password" secureText={true} action={(text)=>setPassword(text)} />
-          <SmallSpacer /><SmallSpacer />
-          <TouchableOpacityButtons titles="Log In" disabledButton={!email || !password} buttonColor={(!email||!password)?'lightgray':'#4C7450'} action={()=>console.log('go to main page')} />
+          <SmallSpacer>
+            <View style={{alignItems:'flex-end'}}>
+              <Buttons titles="forget password" action={()=>renderDestination("passwordrecoverypage")} />
+            </View>
+          </SmallSpacer>
+          <TouchableOpacityButtons titles="Log In" action={()=>signin(props,email,password)} />
         </Spacer>
         <View style={[styles.rowItems2, styles.rowItems]}>
           <Text>Don't have an account? </Text>
@@ -73,6 +89,10 @@ function LoginScreen(props) {
             />
           </TouchableOpacity>
         </View>
+        <Spacer />
+        <Spacer />
+       </View>
+       </ScrollView>
     </SafeAreaView>
   );
 }
@@ -83,6 +103,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#E4E4E4',
+    height:windowHeight
   },
   imageStyle: {
     width: 250,
@@ -111,7 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    width: 200,
+    width: 200
   },
 });
 

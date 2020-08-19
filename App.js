@@ -8,8 +8,9 @@ import { AuthProvider, Context } from './screens/context/AuthContext';
 import LandingScreen from './screens/LandingScreen';
 import LogingScreen from './screens/LoginScreen';
 import CreateAccountScreen from './screens/CreateAccountScreen';
+import PasswordRecPage from './screens/PasswordRecoveryScreen';
 import MainProfileScreen from './screens/profiles/LandingPage';
-import PasswordRecPage from './screens/PasswordRecoveryScreen'
+import SettinsProfileScreen from './screens/profiles/SettingScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -19,16 +20,19 @@ const LoggedInScreens = () => {
 		<NavigationContainer>
 			<Stack.Navigator>
 				<Stack.Screen options={{ headerShown: false }} name="mainprofilepage" component={MainProfileScreen} />
-			<Stack.Screen
+				<Stack.Screen
 					options={{
 						headerShown: true,
 						title: '',
 						headerTransparent: true,
 						headerBackTitleVisible: false,
 					}}
-					name="loginpage"
-					component={LogingScreen}
+					name="settingspage"
+					component={SettinsProfileScreen}
 				/>
+
+				<Stack.Screen options={{ headerShown: false }} name="landingpage" component={LandingScreen} />
+
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
@@ -37,7 +41,9 @@ const NotLoggedInScreens = () => {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator>
+				
 				<Stack.Screen options={{ headerShown: false }} name="landingpage" component={LandingScreen} />
+
 				<Stack.Screen
 					options={{
 						headerShown: true,
@@ -48,6 +54,7 @@ const NotLoggedInScreens = () => {
 					name="createaccountpage"
 					component={CreateAccountScreen}
 				/>
+
 				<Stack.Screen
 					options={{
 						headerShown: true,
@@ -58,13 +65,28 @@ const NotLoggedInScreens = () => {
 					name="loginpage"
 					component={LogingScreen}
 				/>
-				<Stack.Screen options={{ headerShown: false }} name="mainprofilepage" component={MainProfileScreen} />
+
 				<Stack.Screen options={{
 						headerShown: true,
 						title: '',
 						headerTransparent: true,
 						headerBackTitleVisible: false,
 					}} name="passwordrecoverypage" component={PasswordRecPage} />
+
+				<Stack.Screen options={{ headerShown: false }} name="mainprofilepage" component={MainProfileScreen} />
+
+				<Stack.Screen
+					options={{
+						headerShown: true,
+						title: '',
+						headerTransparent: true,
+						headerBackTitleVisible: false,
+					}}
+					name="settingspage"
+					component={SettinsProfileScreen}
+				/>
+
+				
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
@@ -73,9 +95,7 @@ const NotLoggedInScreens = () => {
 export default () => {
 	return (
 		<AuthProvider>
-			<Context.Consumer>
-				{({ data: { token } }) => token ? <LoggedInScreens /> : <NotLoggedInScreens />}
-			</Context.Consumer>
+			<NotLoggedInScreens />
 		</AuthProvider>
 	);
 };
