@@ -8,8 +8,10 @@ import Spacer, {SmallSpacer, SmallestSpacer} from './components/Spacer';
 const windowWidth = Dimensions.get('window').width;
 
 function CreatAccountScreen(props) {
-  const { data:{token},clearErrorMessage} = useContext(Context);
+  const { data:{token,errorMessages},clearErrorMessage,EmailConfirmationProcess} = useContext(Context);
   const [email,setEmail] = useState("")
+  const [password,setPassword] = useState("");
+  const [passwordtwo,setPasswordTwo] = useState("");
   useEffect(() => {
 		props.navigation.addListener('blur', () => clearErrorMessage());
 		props.navigation.addListener('focus', () => clearErrorMessage());
@@ -18,10 +20,10 @@ function CreatAccountScreen(props) {
     return (
       <View>
         <Text style={{textAlign:'center', fontSize:20, fontWeight:'bold'}}>
-        {'\n'}{'\n'}{'\n'}Create Account{'\n'}{'\n'}
+        {'\n'}{'\n'}Create Account
         </Text >
-        <Text style={{textAlign:'center', fontSize:16}}>
-          Enter your email below and a link will be sent in order to set up your password
+        <Text style={{textAlign:'center', fontSize:14, color:'red'}}>
+          {errorMessages}
         </Text>
       </View>
     );
@@ -44,8 +46,11 @@ function CreatAccountScreen(props) {
         <Spacer>
           <Inputs values={email} textplaceholder="Email" action={(text)=>setEmail(text)} />
           <SmallestSpacer />
+          <Inputs values={password} textplaceholder="Password" secureText={true} action={(text)=>setPassword(text)} />
+          <SmallestSpacer />
+          <Inputs values={passwordtwo} textplaceholder="Re-enter password" secureText={true} action={(text)=>setPasswordTwo(text)} />
           <SmallSpacer /><SmallSpacer />
-          <TouchableOpacityButtons titles="Next" disabledButton={!email.includes('@')||!email.includes('.com')} buttonColor={(!email.includes('@')||!email.includes('.com'))?'lightgray':'#4C7450'} action={()=>renderDestination('loginpage')} />
+          <TouchableOpacityButtons titles="Next" disabledButton={!email.includes('@')||!email.includes('.com')} buttonColor={(!email.includes('@')||!email.includes('.com'))?'lightgray':'#4C7450'} action={()=>EmailConfirmationProcess(props,email,password,passwordtwo)} />
         </Spacer>
         <View style={[styles.rowItems2, styles.rowItems]}>
           <Text>Already have an account? Click </Text>

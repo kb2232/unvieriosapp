@@ -1,6 +1,6 @@
 import React, { useContext, useCallback, useState } from 'react';
 import { SafeAreaView } from 'react-navigation';
-import { View, StyleSheet, Image, TouchableOpacity, Text, Dimensions,ScrollView } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text, Dimensions,ScrollView,AsyncStorage } from 'react-native';
 import {Inputs, TouchableOpacityButtons,Buttons} from './components/FormField';
 import { Context } from './context/AuthContext';
 import { FontAwesome } from '@expo/vector-icons';
@@ -10,7 +10,7 @@ const windowHeight = Dimensions.get('window').height;
 
 function LoginScreen(props) {
   const {data:{errorMessages, token},signin} = useContext(Context);
-  const [email,setEmail] = useState("")
+  const [email,setEmail] = useState(AsyncStorage.getItem('emailForSignIn') || "")
   const [password,setPassword] = useState("");
   const renderLogo = () => {
     return (

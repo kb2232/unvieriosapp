@@ -1,4 +1,5 @@
 import React, { useReducer, useEffect } from 'react';
+import {AsyncStorage} from 'react-native'
 import * as Facebook from 'expo-facebook';
 import firebase from 'firebase';
 import { FacebookAPI } from '../api/Auth';
@@ -125,7 +126,7 @@ export const AuthProvider = (props) => {
 			firebase.auth().signOut();
 			navigate('landingpage');
 		};
-	//----------forget password link - updated 8/11/20
+	//----------forget password link - updated 8/20/20
 	const forgetPasswordEmailLink = (props, email) => {
 		
 		const {navigation: { navigate }} = props;
@@ -147,49 +148,60 @@ export const AuthProvider = (props) => {
 			});
 	};
 
-	/** Email confirmation - updated 7/31/20 */
-	const EmailConfirmationProcess = (props, email) => {
+
+	//-----create new user - updated 8/21/20
+	const CreateNewUser=(props,email,password)=>{
+		const {navigation: { navigate }} = props;
 		firebase
-			.auth()
-			.createUserWithEmailAndPassword(email, 'defaultpassword')
-			.then(async () => {
-				await signout(props);
-				await firebase
-					.auth()
-					.sendPasswordResetEmail(email)
-					.then((res) => {
-						dispatch({
-							type: 'add_error',
-							payload: 'Please check your email',
-						});
-						props.navigation.dispatch(
-							CommonActions.navigate({
-								name: 'Logins',
-							})
-						);
-					})
-					.catch((err) => {
-						dispatch({
-							type: 'add_error',
-							payload: 'invalid email',
-						});
-					});
-			})
-			.catch((err) => {
-				console.log({ errorM: err.message });
-				if (err.message === 'The email address is already in use by another account.') {
-					return dispatch({
-						type: 'add_error',
-						payload: 'email is already registered',
-					});
-				}
-				return dispatch({
-					type: 'add_error',
-					payload: 'email was not created',
+		.auth()
+		.createUserWithEmailAndPassword(email, password)
+		.then(async () => {
+			dispatch({type: 'add_error',	payload: 'new account created'});
+			return navigate('landingpage');
+		})
+		.catch((err) => {
+			console.log({ errorM: err.message });
+			if (err.message === 'The email address is already in use by another account.') {
+				return dispatch({type: 'add_error',	payload: 'email is already registered',
 				});
+			}
+			return dispatch({
+				type: 'add_error',
+				payload: 'email was not created',
 			});
-		const user = firebase.auth().currentUser;
-		console.log(user);
+		});
+	}
+
+	/** Email confirmation - updated 7/31/20 */
+	const EmailConfirmationProcess = (props, email,password, password2) => {
+		// check that password matches
+		if(password!==password2){
+			 return dispatch({type: 'add_error',payload: 'password does not match'});
+		}
+		// check that password is 6 digits or more
+		if(password.length < 6){
+			return dispatch({type: 'add_error',payload: 'password must be 6 characters or more'});
+		}
+		// send confirmation email
+		let actionCodeSettings = {
+			url: 'https://unvieronelife.firebaseapp.com',
+			handleCodeInApp: true,
+			iOS: {
+				bundleId: 'unvieronelife'
+			},
+			//dynamicLinkDomain: 'https://unvier.page.link'
+		};
+		firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
+		.then(function() {
+			dispatch({type: 'add_error',payload: 'link sent successfully'});
+			AsyncStorage.setItem('emailForSignIn', email);
+			CreateNewUser(props,email,password);
+		})
+		.catch(function(error) {
+			console.log({ errorM: error.message });
+			dispatch({type: 'add_error',payload: 'incorrect email'});
+		});
+
 	};
 	/* clear error */
 	const clearErrorMessage = () => {
@@ -197,6 +209,7 @@ export const AuthProvider = (props) => {
 			type: 'clear_error',
 		});
 	};
+
 
 	return (
 		<Context.Provider
