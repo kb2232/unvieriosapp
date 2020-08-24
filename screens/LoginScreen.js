@@ -1,4 +1,4 @@
-import React, { useContext, useCallback, useState } from 'react';
+import React, { useContext, useCallback, useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { View, StyleSheet, Image, TouchableOpacity, Text, Dimensions,ScrollView,AsyncStorage } from 'react-native';
 import {Inputs, TouchableOpacityButtons,Buttons} from './components/FormField';
@@ -9,9 +9,13 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 function LoginScreen(props) {
-  const {data:{errorMessages, token},signin} = useContext(Context);
-  const [email,setEmail] = useState(AsyncStorage.getItem('emailForSignIn') || "")
+  const {data:{errorMessages, token, mybio},signin} = useContext(Context);
+  const [email,setEmail] = useState(mybio?mybio:'');
   const [password,setPassword] = useState("");
+  useEffect((mybio)=>{
+    return mybio
+  },[mybio])
+  console.log({mybio,email})
   const renderLogo = () => {
     return (
       <View>

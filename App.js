@@ -15,29 +15,7 @@ import SettinsProfileScreen from './screens/profiles/SettingScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const LoggedInScreens = () => {
-	return (
-		<NavigationContainer>
-			<Stack.Navigator>
-				<Stack.Screen options={{ headerShown: false }} name="mainprofilepage" component={MainProfileScreen} />
-				<Stack.Screen
-					options={{
-						headerShown: true,
-						title: '',
-						headerTransparent: true,
-						headerBackTitleVisible: false,
-					}}
-					name="settingspage"
-					component={SettinsProfileScreen}
-				/>
-
-				<Stack.Screen options={{ headerShown: false }} name="landingpage" component={LandingScreen} />
-
-			</Stack.Navigator>
-		</NavigationContainer>
-	);
-};
-const NotLoggedInScreens = () => {
+const App = () => {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator>
@@ -95,7 +73,7 @@ const NotLoggedInScreens = () => {
 export default () => {
 	return (
 		<AuthProvider>
-			<NotLoggedInScreens />
+			<App />
 		</AuthProvider>
 	);
 };

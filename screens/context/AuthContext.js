@@ -17,6 +17,10 @@ const stateReducer = (state, action) => {
 			return { errorMessages: '', token: payload };
 		case 'sign_in':
 			return { ...state, token: payload };
+		case 'my_bio':
+			return { ...state, mybio: payload };
+		case 'add_success':
+			return { ...state, successMessages: payload };
 		case 'clear_error':
 			return { errorMessages: '' };
 		case 'sign_out':
@@ -31,6 +35,8 @@ export const AuthProvider = (props) => {
 	const DEFAULTSTATE = {
 		token: null,
 		errorMessages: '',
+		mybio: '',
+		successMessages: ''
 	};
 	//-- state varable
 	const [state, dispatch] = useReducer(stateReducer, DEFAULTSTATE);
@@ -156,8 +162,8 @@ export const AuthProvider = (props) => {
 		.auth()
 		.createUserWithEmailAndPassword(email, password)
 		.then(async () => {
-			dispatch({type: 'add_error',	payload: 'new account created'});
-			return navigate('landingpage');
+			dispatch({type: 'add_success',	payload: 'new account created'});
+			return navigate('mainprofilepage');
 		})
 		.catch((err) => {
 			console.log({ errorM: err.message });
@@ -194,7 +200,7 @@ export const AuthProvider = (props) => {
 		firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
 		.then(function() {
 			dispatch({type: 'add_error',payload: 'link sent successfully'});
-			AsyncStorage.setItem('emailForSignIn', email);
+			dispatch({type: 'my_bio',payload: email});
 			CreateNewUser(props,email,password);
 		})
 		.catch(function(error) {
