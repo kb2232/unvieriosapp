@@ -190,7 +190,7 @@ export const AuthProvider = (props) => {
 		}
 		// send confirmation email
 		let actionCodeSettings = {
-			url: 'https://unvieronelife.firebaseapp.com',
+			url: 'https://unvieronelife.firebaseapp.com/mainprofilepage',
 			handleCodeInApp: true,
 			iOS: {
 				bundleId: 'unvieronelife'
@@ -200,8 +200,8 @@ export const AuthProvider = (props) => {
 		firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
 		.then(function() {
 			dispatch({type: 'add_error',payload: 'link sent successfully'});
-			dispatch({type: 'my_bio',payload: email});
-			CreateNewUser(props,email,password);
+		//	dispatch({type: 'my_bio',payload: email});
+			//CreateNewUser(props,email,password);
 		})
 		.catch(function(error) {
 			console.log({ errorM: error.message });
